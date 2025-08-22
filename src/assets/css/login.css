@@ -1,0 +1,55 @@
+.box-img{
+    width: 113px;
+    margin: 60px auto;
+}
+.username-input, .password-input{
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+.password-input{
+    margin-top: 10px;
+}
+.username-input>input, .password-input>input{
+    width: 260px;
+    height: 35px;
+    padding: 2px 10px;
+}
+.username-input::before{
+    content: '';
+    width: 19px;
+    height: 24px;
+    margin-top: 5px;
+    display: inline-block;
+    background: url('https://www.iliangcang.com/images/nlphone.png') no-repeat center;
+}
+.password-input::before{
+    content: '';
+    width: 19px;
+    height: 24px;
+    margin-top: 5px;
+    display: inline-block;
+    background: url('https://www.iliangcang.com/images/nlcode.png') no-repeat center;
+}
+.tips{
+    color: #ff0000;
+    font-size: 12px;
+    width: 300px;
+}
+.box-btu>button{
+    cursor: pointer;
+    width: 300px;
+    height: 50px;
+    border-radius: 2px;
+    background-color: var(--theme-bg-color);
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 30px;
+    margin-bottom: 12px;
+}
+.box-btu>button:hover{
+    background-color: var(--hover-color);
+}
+.box-btu>button:active{
+    background-color: var(--active-color);
+}

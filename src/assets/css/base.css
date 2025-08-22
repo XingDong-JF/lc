@@ -1,0 +1,12 @@
+*{margin: 0;padding: 0;user-select:none}
+img{vertical-align: bottom;}
+li{list-style: none;}
+a{text-decoration: none;}
+input,button{outline: none;border: none;}
+
+:root{
+    --theme-bg-color: #25292e;
+    --hover-color: #575c63;
+    --active-color: #27292b;
+    --border-color: #000
+}
