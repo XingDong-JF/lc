@@ -1,0 +1,169 @@
+.container-top {
+    width: 100%;
+    height: 56px;
+    background-color: var(--theme-bg-color);
+}
+
+.nav-top {
+    width: 1000px;
+    height: 56px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*  */
+.nt-l {
+    width: 95px;
+    height: 38px;
+    margin: 9px 0;
+}
+
+.nt-l>a {
+    display: block;
+    width: 95px;
+    height: 38px;
+    background: url(../imgs/icon.png) no-repeat;
+    transition: all .3s;
+}
+
+.nt-l>a:hover {
+    opacity: .8;
+}
+
+/*  */
+.nt-r {
+    display: flex;
+    font-size: 12px;
+}
+
+.nt-r>span {
+    margin: 0 20px;
+    color: #666;
+}
+
+.nt-r a {
+    transition: all .3s;
+    color: #666;
+}
+
+.nt-r a:hover {
+    color: #ccc;
+}
+
+.nt-r a:first-child li {
+    color: #ccc;
+}
+
+/*  */
+.message-link {
+    position: relative;
+}
+
+.message {
+    position: absolute;
+    top: 18px;
+    left: -90px;
+    display: none;
+    z-index: 66;
+}
+
+.message-link:hover .message {
+    display: block;
+}
+
+/*  */
+.cart-link {
+    position: relative;
+}
+
+.cart {
+    position: absolute;
+    top: 18px;
+    left: -136px;
+    display: none;
+    z-index: 67;
+}
+
+.cart-link:hover .cart {
+    display: block;
+}
+
+/*  */
+/*  */
+.nav-bottom {
+    width: 1000px;
+    height: 45px;
+    margin: 0 auto;
+    display: flex;
+}
+
+.nb-l {
+    display: flex;
+    align-items: center;
+}
+
+.nb-l li {
+    width: 121px;
+    height: 45px;
+    line-height: 46px;
+    text-align: center;
+    color: #333;
+    font-size: 15px;
+    border-bottom: #ededed solid 4px;
+    transition:  all .3s;
+}
+.nb-l :first-child li{
+    width: 100px;
+    text-align: left;
+}
+.nb-l li:hover{
+    border-bottom: var(--theme-bg-color) solid 4px;
+}
+/*  */
+.goods-link {
+    position: relative;
+}
+.goods {
+    position: absolute;
+    top: 49px;
+    left: -100px;
+    display: none;
+    z-index: 65;
+    border: 1px solid #fff;
+}
+.goods-link:hover .goods {
+    display: block;
+}
+.goods-link:hover li{
+    border-bottom: var(--theme-bg-color) solid 4px;
+}
+/*  */
+.nb-r{
+    width: 100%;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    border-bottom: #ededed solid 4px;
+    transition: all .3s;
+}
+.nb-r:hover{
+    border-bottom: var(--theme-bg-color) solid 4px;
+}
+.nb-r input{
+    margin-left: 20px;
+    width: 80%;
+    height: 30px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 4px 0 2px;
+}
+.nb-r span{
+    display: block;
+    width: 33px;
+    height: 40px;
+    background-color: #fff;
+    background: url(../imgs/icon.png) -167px -145px no-repeat;
+    cursor: pointer;
+}

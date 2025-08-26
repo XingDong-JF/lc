@@ -208,7 +208,9 @@ watch(passwordAgain, () => {
   text-align: center;
   font-size: 12px;
 }
-
+.box-login>a{
+  color: #404040;
+}
 /* 调整占位符的样式，确保它们不会干扰验证码组件 */
 .box-input input::placeholder {
   color: #aaa;

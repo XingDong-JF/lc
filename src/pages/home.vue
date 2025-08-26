@@ -1,3 +1,13 @@
+<script setup>
+import Footer from '../components/Footer.vue';
+import Header from '../components/Header.vue';
+import BannerCarousel from '../components/BannerCarousel.vue';
+</script>
 <template>
-  <h1>hello</h1>
+  <Header></Header>
+  <BannerCarousel></BannerCarousel>
+  <Footer></Footer>
 </template>
+<script>
+
+</script>

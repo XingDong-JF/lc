@@ -10,6 +10,17 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path
       }
+      ,
+      '/api_cat': {
+        target: 'http://8.134.172.28:3008',
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
+      '/api_banner': {
+        target: 'http://8.134.172.28:3008',
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
     }
   }
 })

@@ -6,7 +6,7 @@ import axios from 'axios';
 // post：检查用户名是否存在
 export const checkUsername = async (username) => {
     try {
-        let res = await axios.post('/api_user', { 
+        let res = await axios.post('/api_user', {
             username,
             status: 'check'
         }, {
@@ -64,6 +64,38 @@ export const login = async (username, password) => {
         return true;
     } catch (error) {
         console.error('登录失败:', error);
+        return false;
+    }
+}
+
+// get：获取商品分类
+export const goodsClassify = async () => {
+    try {
+        let res = await axios.get('/api_cat');
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取商品分类失败:', error);
+        return false;
+    }
+}
+
+// get：获取广告轮播图片
+export const bannerCarousel = async () => {
+    try {
+        let res = await axios.get('/api_banner', {
+            params: {
+                bannerId: 1
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取广告轮播图片失败:', error);
         return false;
     }
 }

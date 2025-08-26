@@ -1,5 +1,19 @@
-# Vue 3 + Vite
+# 每一个API记得配置vite.config.js
+## z-index 
+    top: 60
+    cart: 67
+    message: 66
+    goods: 65
+    footer: 20
+    footer-download: 21
+    footer-right: 22
+    banner:.bc-pre, .bc-next: 12
+    banner:.bc-btu: 11
+    banner:.slide-container: 10
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## 待补充
+    1.购物车组件数据渲染以及页面
+    2.一级菜单的跳转
+    3.二级菜单的显示
+    4.商品搜索
+    5.点击跳转到商品分类

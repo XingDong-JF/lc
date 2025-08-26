@@ -143,4 +143,7 @@ watch(password, () => {
     text-align: center;
     font-size: 12px;
 }
+.box-register>a{
+    color: #404040;
+}
 </style>

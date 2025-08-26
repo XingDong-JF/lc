@@ -1,0 +1,146 @@
+.banner-carousel{
+    width: 1000px;
+    height: 470px;
+    margin: 80px auto;
+    position: relative;
+    overflow: hidden;
+}
+.bc-pre, .bc-next{
+    width: 130px;
+    height: 470px;
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 12; /* 增加 z-index 确保按钮在图片上方 */
+    transition: opacity 0.3s ease; /* 添加过渡效果 */
+    cursor: pointer; /* 添加指针样式 */
+}
+
+.bcp-img , .bcn-img{
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    background-size: contain;
+}
+
+.bcp-img{
+    background: url('../imgs/normal_left.png') no-repeat center;
+    transform: rotate(180deg);  
+}
+
+.bcn-img{
+    background: url('../imgs/normal_left.png') no-repeat center;
+}
+
+.bc-pre{
+    left: 0;
+}
+
+.bc-next{
+    right: 0;
+}
+
+.banner-carousel:hover .bc-pre,
+.banner-carousel:hover .bc-next{
+    opacity: 1;
+}
+.bc-pre:hover .bcp-img{
+    background: url('../imgs/circle_left_arrow1.png') no-repeat center;
+    transform: rotate(180deg);
+}
+.bc-next:hover .bcn-img{
+    background: url('../imgs/circle_left_arrow1.png') no-repeat center;
+}
+
+/* 轮播图指示器样式 */
+.bc-btu {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 11;
+}
+
+.bc-btu span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bc-btu span.active {
+    background-color: #fff;
+    transform: scale(1.2);
+}
+
+/* 图片容器样式 */
+.bc-imgs {
+    width: 100%;
+    height: 470px;
+    overflow: hidden;
+    position: relative;
+}
+
+.bc-imgs img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 确保RouterLink不会影响图片布局 */
+.bc-imgs a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* 轮播动画 */
+.slide-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 10; /* 确保在按钮下层 */
+}
+
+.slide-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 进入和离开动画 */
+.slide-enter-active,
+.slide-leave-active {
+    transition: all 0.5s ease;
+}
+
+/* 向右滑动的效果 */
+.slide-right .slide-enter-from {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.slide-right .slide-leave-to {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+/* 向左滑动的效果 */
+.slide-left .slide-enter-from {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.slide-left .slide-leave-to {
+    transform: translateX(100%);
+    opacity: 0;
+}
