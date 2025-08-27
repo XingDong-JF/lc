@@ -1,11 +1,15 @@
-.banner-carousel{
+.banner-carousel {
     width: 1000px;
     height: 470px;
-    margin: 80px auto;
+    margin: 0 auto;
+    margin-top: 80px;
+    margin-bottom: 40px;
     position: relative;
     overflow: hidden;
 }
-.bc-pre, .bc-next{
+
+.bc-pre,
+.bc-next {
     width: 130px;
     height: 470px;
     position: absolute;
@@ -14,44 +18,50 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 12; /* 增加 z-index 确保按钮在图片上方 */
-    transition: opacity 0.3s ease; /* 添加过渡效果 */
-    cursor: pointer; /* 添加指针样式 */
+    z-index: 12;
+    /* 增加 z-index 确保按钮在图片上方 */
+    transition: opacity 0.3s ease;
+    /* 添加过渡效果 */
+    cursor: pointer;
+    /* 添加指针样式 */
 }
 
-.bcp-img , .bcn-img{
+.bcp-img,
+.bcn-img {
     width: 50px;
     height: 50px;
     cursor: pointer;
     background-size: contain;
 }
 
-.bcp-img{
+.bcp-img {
     background: url('../imgs/normal_left.png') no-repeat center;
-    transform: rotate(180deg);  
+    transform: rotate(180deg);
 }
 
-.bcn-img{
+.bcn-img {
     background: url('../imgs/normal_left.png') no-repeat center;
 }
 
-.bc-pre{
+.bc-pre {
     left: 0;
 }
 
-.bc-next{
+.bc-next {
     right: 0;
 }
 
 .banner-carousel:hover .bc-pre,
-.banner-carousel:hover .bc-next{
+.banner-carousel:hover .bc-next {
     opacity: 1;
 }
-.bc-pre:hover .bcp-img{
+
+.bc-pre:hover .bcp-img {
     background: url('../imgs/circle_left_arrow1.png') no-repeat center;
     transform: rotate(180deg);
 }
-.bc-next:hover .bcn-img{
+
+.bc-next:hover .bcn-img {
     background: url('../imgs/circle_left_arrow1.png') no-repeat center;
 }
 
@@ -106,7 +116,8 @@
     position: relative;
     width: 100%;
     height: 100%;
-    z-index: 10; /* 确保在按钮下层 */
+    z-index: 10;
+    /* 确保在按钮下层 */
 }
 
 .slide-item {

@@ -68,7 +68,7 @@ export const login = async (username, password) => {
     }
 }
 
-// get：获取商品分类
+// get：获取商品导航分类
 export const goodsClassify = async () => {
     try {
         let res = await axios.get('/api_cat');
@@ -96,6 +96,25 @@ export const bannerCarousel = async () => {
         return res.data.data;
     } catch (error) {
         console.error('获取广告轮播图片失败:', error);
+        return false;
+    }
+}
+
+// get：获取热门商品
+export const hotGoods = async (page, pagesize) => {
+    try {
+        let res = await axios.get('/api_goods', {
+            params: {
+                page,
+                pagesize,
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取热门商品失败:', error);
         return false;
     }
 }

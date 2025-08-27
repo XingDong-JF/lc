@@ -1,0 +1,78 @@
+.os{
+    width: 1000px;
+    margin: 0 auto;
+    padding-top: 40px;
+    border-top: 1px solid #dddddd;
+    margin-bottom: 30px;
+}
+.os-title{
+    width: 220px;
+    height: 40px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+.ost-img{
+    width: 27px;
+    height: 15px;
+    background: url(../imgs/icon.png) -173px -356px no-repeat;
+    animation: ostImg 1.2s ease-in-out infinite;
+    animation-play-state: paused;
+}
+.ost-text{
+    font-size: 16px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    color: #878787;
+}
+@keyframes ostImg {
+    0%{transform: translateX(0px);}
+    50%{transform: translateX(-30px);}
+    100%{transform: translateX(0px);}
+}
+.os-lis{
+    width: 1000px;
+    height: 102px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.os-lis>div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.osll-img{
+    width: 56px;
+    height: 60px;
+}
+.osl-li1>.osll-img{
+    background: url(../imgs/icon.png) 0 -355px no-repeat;
+    margin-right: 14px;
+}
+.osl-li2>.osll-img{
+    background: url(../imgs/icon.png) -153px -217px no-repeat;
+    margin-right: 4px;
+}
+.osl-li3>.osll-img{
+    background: url(../imgs/icon.png) -57px -353px no-repeat;
+    margin-right: 14px;
+}
+.osl-li4>.osll-img{
+    background: url(../imgs/icon.png) -114px -353px no-repeat;
+    margin-right: 14px;
+}
+.osll-p1{
+    height: 24px;
+    line-height: 24px;
+    overflow: hidden;
+    font-size: 14px;
+    color: #737373;
+    text-align: left;
+}
+.osll-p2{
+    font-size: 12px;
+    color: #ccc;
+}

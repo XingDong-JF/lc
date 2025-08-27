@@ -85,7 +85,6 @@ async function toRegister() {
     // 调用 checkUsername API 检查用户名是否存在
     try {
       axiosCheckUsername = await checkUsername(username.value);
-      console.log(axiosCheckUsername)
     } catch (error) {
       console.error("Error checking username:", error);
       showPopupMessage('检查用户名时发生错误！');

@@ -10,7 +10,6 @@ const showError = ref(false);
 const fetchCategories = async () => {
     const result = await goodsClassify();
     if (!result) {
-        console.log('res=',result)
         showError.value = true;
     } else {
         categories.value = result;
