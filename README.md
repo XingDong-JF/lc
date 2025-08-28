@@ -1,5 +1,6 @@
 # 每一个API记得配置vite.config.js
 ## z-index 
+    header: 59
     top: 60
     cart: 67
     message: 66
@@ -10,6 +11,7 @@
     banner:.bc-btu: 11
     banner:.slide-container: 10
     htg-hover: 5
+    gotop: 80
 
 ## 待补充
     1.购物车组件数据渲染以及页面

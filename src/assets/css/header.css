@@ -2,6 +2,15 @@
     width: 100%;
     height: 56px;
     background-color: var(--theme-bg-color);
+    position: fixed;
+    top: 0;
+    z-index: 59;
+    transition: all .3s;
+}
+
+/* 滚动后的样式 */
+.container-top.scrolled {
+    transform: translateY(-57px);
 }
 
 .nav-top {
@@ -97,6 +106,7 @@
     height: 45px;
     margin: 0 auto;
     display: flex;
+    background-color: #fff;
 }
 
 .nb-l {

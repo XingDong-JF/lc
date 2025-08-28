@@ -8,6 +8,17 @@ const begin = () => {
 const end = () => {
     const ostImg = document.querySelector('.ost-img');
     ostImg.style.transform = 'translate(0px)';
+    /**
+     * ostImg.style.animationPlayState = 'paused';
+    // 关键：重置动画到初始状态
+    // 1. 移除当前应用的所有样式，以确保动画回到起点
+    ostImg.style.animation = 'none'; // 移除所有动画属性
+    // 2. 强制重绘 (reflow) 以确保样式更新生效
+    ostImg.offsetHeight; // 这是一个常用的技巧来触发重绘
+    // 3. 重新应用动画属性，使其回到初始状态
+    ostImg.style.animation = 'ostImg 1.2s ease-in-out infinite';
+    ostImg.style.animationPlayState = 'paused'; // 再次暂停
+     */
 }
 
 </script>

@@ -5,21 +5,39 @@ import GoodsClassify from './GoodsClassify.vue';
 
 import '../assets/css/header.css';
 
-import { ref,onMounted  } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 const username = ref('admin');
+const isScrolled = ref(false);
+
+const handleScroll = () => {
+    if (window.scrollY > 100) {
+        isScrolled.value = true;
+    } else {
+        isScrolled.value = false;
+    }
+};
+
 onMounted (() => {
     const user = localStorage.getItem('username');
     if (user) {
         username.value = user;
-    }else{
+    } else {
         username.value = sessionStorage.getItem('username');
     }
+    
+    // 添加滚动事件监听
+    window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+    // 移除滚动事件监听，防止内存泄漏
+    window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
 <template>
-    <div class="container-top">
+    <div class="container-top" :class="{ 'scrolled': isScrolled }">
         <div class="nav-top">
             <div class="nt-l">
                 <router-link to="/home"></router-link>
