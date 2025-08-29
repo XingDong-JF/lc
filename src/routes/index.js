@@ -49,6 +49,24 @@ const routes = [
       title: '良仓',
       requiresAuth: true // 标记为需要认证的页面
     }
+  },
+  {
+    path: '/classify/:catId',
+    name: 'Classify',
+    component: () => import('../pages/classify.vue'), // 懒加载
+    meta: {
+      title: '良仓-分类商品',
+      requiresAuth: true // 标记为需要认证的页面
+    }
+  },
+  {
+    path: '/detail/:goodsId',
+    name: 'Detail',
+    component: () => import('../pages/detail.vue'), // 懒加载
+    meta: {
+      title: '良仓-商品详情',
+      requiresAuth: true // 标记为需要认证的页面
+    }
   }
 ];
 

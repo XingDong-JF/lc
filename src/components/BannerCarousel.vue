@@ -119,12 +119,12 @@ onBeforeUnmount(() => {
                 class="slide-container"
                 :class="{ 'slide-right': direction === 1, 'slide-left': direction === -1 }"
             >   
-                <!-- 待补充点击跳转到商品分类 -->
-                <!-- :to="`/category/${banner.cat_id}/goods/${banner.goods_id}`"  -->
+                <!-- 点击跳转到商品详情 -->
+                <!-- :to="{ name: 'Detail', params: { goodsId: banner.goods_id }}"  -->
                 <router-link 
                     v-for="(banner, index) in banners" 
                     :key="index"
-
+                    :to="{ name: 'Detail', params: { goodsId: banner.goods_id }}" 
                     v-show="index === currentIndex"
                     class="slide-item"
                 >

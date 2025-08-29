@@ -3,9 +3,11 @@ import '../assets/css/goodsClassify.css';
 import PopUp from './PopUp.vue';
 import { goodsClassify } from '../apis/index.js';
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const categories = ref([]);
 const showError = ref(false);
+const router = useRouter();
 
 const fetchCategories = async () => {
     const result = await goodsClassify();
@@ -16,22 +18,33 @@ const fetchCategories = async () => {
     }
 };
 
+// 跳转到分类页面
+const navigateToClassify = (catId, catName) => {
+    try {
+        router.push({
+            name: 'Classify',
+            params: { catId: catId.toString() },
+            query: { catName }
+        });
+    } catch (error) {
+        console.error('Navigation error:', error);
+        // 备用方案
+        window.location.href = `/classify/${catId}?catName=${encodeURIComponent(catName)}`;
+    }
+};
+
 onMounted(() => {
     fetchCategories();
 });
 </script>
 
 <template>
-    <div class="goods-component">
-        <PopUp v-if="showError" message="获取商品分类失败" />
+    <div class="goods-component goods">
         <div class="goods-component-top">
             <div class="gc-l">
                 <div class="category-grid">
-                    <!-- 待补充一级菜单的跳转 -->
-                    <div v-for="item in categories" 
-                         :key="item.cat_id"
-                         class="category-item"
-                         :data-cat-id="item.cat_id">
+                    <div v-for="item in categories" :key="item.cat_id" class="category-item" :data-cat-id="item.cat_id"
+                        @click="navigateToClassify(item.cat_id, item.cat_name)">
                         <img :src="item.cat_img" :alt="item.cat_name">
                         <p>{{ item.cat_name }}</p>
                         <!-- 待补充二级菜单显示 -->
@@ -50,8 +63,7 @@ onMounted(() => {
             <a href="javascript:void()"><span>最新到货&nbsp;></span></a>
         </div>
     </div>
+    <PopUp v-if="showError" message="获取商品分类失败" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

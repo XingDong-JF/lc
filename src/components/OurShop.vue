@@ -1,5 +1,5 @@
 <script setup>
-import '../assets/css/11.css';
+import '../assets/css/ourShop.css';
 
 const begin = () => {
     const ostImg = document.querySelector('.ost-img');

@@ -47,10 +47,10 @@ onMounted(() => {
         <span>人气良品</span>
     </div>
     <div class="ht">
-        <!-- :to="{ path: '/detail', query: { goods_id: item.goods_id, cat_id: item.cat_id }}" -->
+        <!-- :to="{ name: 'Detail', params: { goodsId: item.goods_id }}" -->
         <!-- 待补充，热门商品跳转到详情 -->
         <div v-for="(item, index) in hotList" :key="item.goods_id" class="ht-goods-wrapper">
-            <router-link>
+            <router-link :to="{ name: 'Detail', params: { goodsId: item.goods_id }}" >
                 <div class="ht-goods">
                     <div class="htg-img">
                         <img :src="item.goods_thumb" :alt="item.goods_name">

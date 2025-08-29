@@ -6,6 +6,7 @@ import StaticAdvertisement from '../components/StaticAdvertisement.vue';
 import HotGoods from '../components/HotGoods.vue';
 import OurShop from '../components/OurShop.vue';
 import GoTop from '../components/GoTop.vue';
+import MenuPop from '../components/MenuPop.vue';
 </script>
 <template>
   <Header></Header>
@@ -15,6 +16,7 @@ import GoTop from '../components/GoTop.vue';
   <OurShop></OurShop>
   <Footer></Footer>
   <GoTop></GoTop>
+  <MenuPop></MenuPop>
 </template>
 <script>
 

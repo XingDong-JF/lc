@@ -37,7 +37,7 @@ onUnmounted(() => {
     background: url(../assets/imgs/icon.png) -20px -813px no-repeat;
     position: fixed;
     bottom: 120px;
-    right: 40px;
+    right: 30px;
     border-radius: 21%;
     z-index: 80;
     display: none;

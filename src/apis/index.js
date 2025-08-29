@@ -118,3 +118,40 @@ export const hotGoods = async (page, pagesize) => {
         return false;
     }
 }
+
+// get：获取分类商品
+export const classifyGoods = async (page, pagesize, catId) => {
+    try {
+        let res = await axios.get('/api_goods', {
+            params: {
+                page,
+                pagesize,
+                catId
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取分类商品失败:', error);
+        return false;
+    }
+}
+// get：获取商品详情
+export const goodsDetail = async (goodsId) => {
+    try {
+        let res = await axios.get('/api_goods', {
+            params: {
+                goodsId
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取商品详情失败:', error);
+        return false;
+    }
+}
