@@ -52,8 +52,10 @@ async function toLogin() {
             // 检验自动登录
             if (rememberMe.value) {
                 localStorage.setItem('username', username.value);
+                localStorage.setItem('userId', axiosLogin.user_id);
             } else {
                 sessionStorage.setItem('username', username.value);
+                sessionStorage.setItem('userId', axiosLogin.user_id);
             }
             router.push('/home')
         } else {

@@ -67,6 +67,15 @@ const routes = [
       title: '良仓-商品详情',
       requiresAuth: true // 标记为需要认证的页面
     }
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: () => import('../pages/cart.vue'), // 懒加载
+    meta: {
+      title: '良仓-购物车',
+      requiresAuth: true // 标记为需要认证的页面
+    }
   }
 ];
 

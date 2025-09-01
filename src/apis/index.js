@@ -61,7 +61,7 @@ export const login = async (username, password) => {
         if (res.data.code !== 0) {
             return false;
         }
-        return true;
+        return res.data;
     } catch (error) {
         console.error('登录失败:', error);
         return false;
@@ -152,6 +152,29 @@ export const goodsDetail = async (goodsId) => {
         return res.data.data;
     } catch (error) {
         console.error('获取商品详情失败:', error);
+        return false;
+    }
+}
+
+// post：添加商品到购物车
+export const addToCart = async (userId,goodsId,goodsNumber) =>{
+    try {
+        let res = await axios.post('/api_cart', {
+            status: 'addcart',
+            userId,
+            goodsId,
+            goodsNumber
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('添加商品到购物车失败:', error);
         return false;
     }
 }

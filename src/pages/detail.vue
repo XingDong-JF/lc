@@ -10,7 +10,7 @@ import GoTop from '../components/GoTop.vue';
 
 import '../assets/css/detail.css';
 
-import { goodsDetail } from '../apis';
+import { goodsDetail, addToCart } from '../apis';
 import { onMounted, ref, computed, watch, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -23,6 +23,9 @@ const goodsCount = ref(1);
 const isLike = ref(false);
 const isNumber = ref(true); // 是否有库存
 const thumbsScrollPosition = ref(0); // 缩略图滚动位置
+const isAddingToCart = ref(false); // 是否正在添加到购物车（防抖）
+const showAddCartSuccess = ref(false); // 显示添加购物车成功提示
+const showAddCartError = ref(false); // 显示添加购物车失败提示
 
 // 放大镜效果相关变量
 const showMagnifier = ref(false); // 是否显示放大镜
@@ -32,28 +35,28 @@ const zoomLevel = 2; // 放大倍数
 
 // 节流函数
 const throttle = (fn, delay) => {
-  let timer = null;
-  let lastTime = 0;
-  
-  return function(...args) {
-    const now = Date.now();
-    const remaining = delay - (now - lastTime);
-    
-    if (remaining <= 0 || remaining > delay) {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-      lastTime = now;
-      fn.apply(this, args);
-    } else if (!timer) {
-      timer = setTimeout(() => {
-        lastTime = Date.now();
-        timer = null;
-        fn.apply(this, args);
-      }, remaining);
-    }
-  };
+    let timer = null;
+    let lastTime = 0;
+
+    return function (...args) {
+        const now = Date.now();
+        const remaining = delay - (now - lastTime);
+
+        if (remaining <= 0 || remaining > delay) {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            lastTime = now;
+            fn.apply(this, args);
+        } else if (!timer) {
+            timer = setTimeout(() => {
+                lastTime = Date.now();
+                timer = null;
+                fn.apply(this, args);
+            }, remaining);
+        }
+    };
 };
 
 // 切换当前展示的图片
@@ -97,31 +100,31 @@ const updateThumbsPosition = () => {
     if (!goodsData.value || !goodsData.value.length || !goodsData.value[0].banner) {
         return;
     }
-    
+
     const bannerLength = goodsData.value[0].banner.length;
     const thumbWidth = 70; // 每个缩略图的宽度
     const spacing = 10; // 每个缩略图的间距
     const containerWidth = 280; // 缩略图容器宽度 (减去左右箭头宽度)
     const itemFullWidth = thumbWidth + spacing; // 每个项的总宽度，包括间距
-    
+
     // 计算所有缩略图的总宽度
     const totalWidth = bannerLength * thumbWidth + (bannerLength - 1) * spacing;
-    
+
     // 如果总宽度小于容器宽度，居中显示，不滑动
     if (totalWidth <= containerWidth) {
         thumbsScrollPosition.value = (containerWidth - totalWidth) / 2;
         return;
     }
-    
+
     // 计算显示窗口中可以显示的缩略图数量
     const visibleItems = Math.floor(containerWidth / itemFullWidth);
-    
+
     // 计算当前索引在所有项中的相对位置（0-1之间的值）
     const relativeIndex = currentImageIndex.value / (bannerLength - 1);
-    
+
     // 计算可滚动的总距离
     const scrollableWidth = totalWidth - containerWidth;
-    
+
     // 根据当前索引的相对位置，计算滚动位置
     // 如果当前图片索引在前半部分，保持在左侧
     // 如果当前图片索引在后半部分，保持在右侧
@@ -142,7 +145,7 @@ const updateThumbsPosition = () => {
 
 // 商品数量增加
 const increaseCount = () => {
-    if (goodsCount.value < 99) {
+    if (goodsCount.value < 99 && goodsCount.value < parseInt(goodsData.value[0].goods_number)) {
         goodsCount.value++;
     }
 };
@@ -168,6 +171,66 @@ const addLike = () => {
     }
 };
 
+// 添加到购物车
+const addToCartHandle = () => {
+    // 防抖处理
+    if (isAddingToCart.value) return;
+    
+    // 检查前置条件
+    if (!isNumber.value) {
+        showAddCartError.value = true;
+        setTimeout(() => {
+            showAddCartError.value = false;
+        }, 2000);
+        return;
+    }
+    
+    // 获取用户ID - 先检查sessionStorage再检查localStorage
+    let userId = sessionStorage.getItem('userId');
+    // 如果sessionStorage中没有，再尝试从localStorage获取
+    if (!userId) {
+        userId = localStorage.getItem('userId');
+    }
+    
+    // 检查是否获取到userId
+    if (!userId) {
+        console.log('未找到用户ID', {
+            sessionUserId: sessionStorage.getItem('userId'),
+            localUserId: localStorage.getItem('userId')
+        });
+        showAddCartError.value = true;
+        setTimeout(() => {
+            showAddCartError.value = false;
+        }, 2000);
+        return;
+    }
+    
+    isAddingToCart.value = true;
+    console.log('添加到购物车:', {userId, goodsId: goodsId.value, goodsCount: goodsCount.value});
+    
+    // 调用API添加到购物车
+    addToCart(userId, goodsId.value, goodsCount.value).then(result => {
+        if (result) {
+            showAddCartSuccess.value = true;
+            setTimeout(() => {
+                showAddCartSuccess.value = false;
+            }, 2000);
+        } else {
+            showAddCartError.value = true;
+            setTimeout(() => {
+                showAddCartError.value = false;
+            }, 2000);
+        }
+        isAddingToCart.value = false;
+    }).catch(() => {
+        showAddCartError.value = true;
+        setTimeout(() => {
+            showAddCartError.value = false;
+        }, 2000);
+        isAddingToCart.value = false;
+    });
+};
+
 // 处理鼠标移入图片事件
 const handleMouseEnter = () => {
     showMagnifier.value = true;
@@ -181,19 +244,19 @@ const handleMouseLeave = () => {
 // 处理鼠标在图片上移动事件
 const handleMouseMove = (event) => {
     if (!showMagnifier.value || !goodsData.value || !goodsData.value.length) return;
-    
+
     const imageContainer = event.currentTarget;
     const rect = imageContainer.getBoundingClientRect();
-    
+
     // 计算鼠标在图片上的相对位置 (0-1范围)
     // 需要考虑图片滑动的位置
     const relativeX = (event.clientX - rect.left) / rect.width;
     const relativeY = (event.clientY - rect.top) / rect.height;
-    
+
     // 限制在0-1范围内
     const boundedX = Math.max(0, Math.min(1, relativeX));
     const boundedY = Math.max(0, Math.min(1, relativeY));
-    
+
     // 更新放大镜位置
     magnifierPosition.value = {
         x: boundedX,
@@ -207,7 +270,7 @@ const fetchDetail = async () => {
     isLike.value = false;
     goodsCount.value = 1;
     showMagnifier.value = false;
-    
+
     let result = await goodsDetail(goodsId.value);
     if (!result) {
         showDetaliError.value = true;
@@ -261,6 +324,17 @@ const breadcrumbItems = computed(() => {
 
     return items;
 });
+
+// 计算属性：是否达到最大数量
+const isMaxCount = computed(() => {
+    if (!goodsData.value || !goodsData.value.length) return false;
+    return goodsCount.value >= parseInt(goodsData.value[0].goods_number);
+});
+
+// 计算属性：是否达到最小数量
+const isMinCount = computed(() => {
+    return goodsCount.value <= 1;
+});
 </script>
 
 <template>
@@ -271,16 +345,9 @@ const breadcrumbItems = computed(() => {
             <div class="dl-top">
                 <div class="dlt-l">
                     <div class="dltl-t">
-                        <div 
-                            class="image-container"
-                            @mouseenter="handleMouseEnter"
-                            @mouseleave="handleMouseLeave"
-                            @mousemove="handleMouseMove"
-                        >
-                            <div 
-                                class="image-slider" 
-                                :style="{transform: `translateX(-${currentImageIndex * 100}%)`}"
-                            >
+                        <div class="image-container" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave"
+                            @mousemove="handleMouseMove">
+                            <div class="image-slider" :style="{ transform: `translateX(-${currentImageIndex * 100}%)` }">
                                 <img v-for="(item, index) in goodsData[0].banner" :key="index" :src="item" alt="商品图片">
                             </div>
                         </div>
@@ -289,14 +356,11 @@ const breadcrumbItems = computed(() => {
                         <div class="banner-navigation">
                             <div class="thumb-arrow thumb-left" @click="prevImage">&lt;</div>
                             <div class="banner-container">
-                                <div class="banner-scroll" :style="{transform: `translateX(${thumbsScrollPosition}px)`}">
-                                    <div 
-                                        v-for="(item, index) in goodsData[0].banner" 
-                                        :key="index" 
-                                        class="banner-item" 
+                                <div class="banner-scroll"
+                                    :style="{ transform: `translateX(${thumbsScrollPosition}px)` }">
+                                    <div v-for="(item, index) in goodsData[0].banner" :key="index" class="banner-item"
                                         :class="{ active: index === currentImageIndex }"
-                                        @click="changeCurrentImage(index)"
-                                    >
+                                        @click="changeCurrentImage(index)">
                                         <img :src="item" alt="缩略图">
                                     </div>
                                 </div>
@@ -308,14 +372,11 @@ const breadcrumbItems = computed(() => {
                 <div class="dlt-r">
                     <!-- 放大镜视图 -->
                     <div v-if="showMagnifier" class="magnifier-view">
-                        <div 
-                            class="magnified-image" 
-                            :style="{
-                                backgroundImage: `url(${goodsData[0].banner[currentImageIndex]})`,
-                                backgroundPosition: `${magnifierPosition.x * 100}% ${magnifierPosition.y * 100}%`,
-                                backgroundSize: `${zoomLevel * 100}%`
-                            }"
-                        ></div>
+                        <div class="magnified-image" :style="{
+                            backgroundImage: `url(${goodsData[0].banner[currentImageIndex]})`,
+                            backgroundPosition: `${magnifierPosition.x * 100}% ${magnifierPosition.y * 100}%`,
+                            backgroundSize: `${zoomLevel * 100}%`
+                        }"></div>
                     </div>
                     <div class="dltr-like" @click="addLike">
                         <span class="span-like">{{ isLike ? '💖' : '🤍' }}</span>
@@ -343,9 +404,9 @@ const breadcrumbItems = computed(() => {
                     <div class="dltr-number">
                         <span class="span-forword">数量：</span>
                         <div class="number-input">
-                            <div class="ni-left" @click="decreaseCount">-</div>
+                            <div class="ni-left" @click="decreaseCount" :class="{ 'disabled': isMinCount }">-</div>
                             <div class="ni-center">{{ goodsCount }}</div>
-                            <div class="ni-right" @click="increaseCount">+</div>
+                            <div class="ni-right" @click="increaseCount" :class="{ 'disabled': isMaxCount }">+</div>
                         </div>
                     </div>
                     <div class="dltr-tips-nonumber">
@@ -359,7 +420,7 @@ const breadcrumbItems = computed(() => {
                     </div>
                     <div class="dltr-btus">
                         <!-- 待补充加入购物车 -->
-                        <div class="dltr-left-btu" @click="addToCart">
+                        <div class="dltr-left-btu" @click="addToCartHandle">
                             <img src="../assets/imgs/导航-购物车.png" alt="">
                             <span>添加购物车</span>
                         </div>
@@ -368,11 +429,17 @@ const breadcrumbItems = computed(() => {
                             <span>分享</span>
                         </div>
                     </div>
+                    <div class="dltr-tips-addShop" v-if="showAddCartSuccess">
+                        <span>添加购物车成功！！！</span>
+                    </div>
+                    <div class="dltr-tips-addShop-error" v-if="showAddCartError">
+                        <span>添加购物车失败，稍后再试吧！</span>
+                    </div>
                 </div>
             </div>
             <div class="dl-down" v-for="(item, index) in goodsData[0].product_banner" :key="index">
-                <img :src="item">
-            </div>
+                    <img :src="item">
+                </div>
         </div>
         <div class="d-r">
             <GuessLike></GuessLike>
@@ -386,47 +453,4 @@ const breadcrumbItems = computed(() => {
 </template>
 
 <style scoped>
-/* 自定义过渡效果 */
-.fade-enter-active, .fade-leave-active {
-    transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to {
-    opacity: 0;
-}
-
-/* 数量增减按钮鼠标悬停效果 */
-.ni-left:hover, .ni-right:hover {
-    background-color: #f5f5f5;
-}
-
-/* 根据库存状态设置不同的样式 */
-.dltr-nonumber {
-    color: #ff4d4f;
-}
-
-/* 放大镜视图样式 */
-.magnifier-view {
-    width: 350px;
-    height: 350px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    border: 2px solid #f0f0f0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    background-color: #fff;
-    pointer-events: none; /* 防止放大镜阻挡鼠标事件 */
-}
-
-.magnified-image {
-    width: 100%;
-    height: 100%;
-    background-repeat: no-repeat;
-}
-
-/* 右侧容器相对定位，用于放大镜定位 */
-.dlt-r {
-    position: relative;
-}
 </style>

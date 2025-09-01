@@ -26,6 +26,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path
       },
+      '/api_cart': {
+        target: 'http://8.134.172.28:3008',
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
     }
   }
 })
