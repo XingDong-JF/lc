@@ -76,7 +76,7 @@ const routes = [
       title: '良仓-购物车',
       requiresAuth: true // 标记为需要认证的页面
     }
-  }
+  },
 ];
 
 // 创建路由实例

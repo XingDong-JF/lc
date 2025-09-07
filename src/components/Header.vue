@@ -1,6 +1,6 @@
 <script setup>
 import Message from './Message.vue';
-import Cart from './Cart.vue';
+import Cart from './HeadCart.vue';
 import GoodsClassify from './GoodsClassify.vue';
 
 import '../assets/css/header.css';

@@ -1,0 +1,133 @@
+.cart-page{
+    width: 1000px;
+    margin: 110px auto;
+}
+.cart-page-title{
+    width: 1000px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 2px;
+}
+.cart-page-title span{
+    padding: 0 40px;
+    color: #666;
+}
+.cart-page-title p{
+    font-size: 20px;
+    cursor: pointer;
+}
+/*  */
+.cart-page-shop{
+    width: 1000px;
+    height: auto;
+    margin-top: 40px;
+}
+.cart-page-shop img{
+    width: 100px;
+    height: 100px;
+}
+/* 美化购物车表格样式 */
+.cart-page-shop table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.cart-page-shop th, .cart-page-shop td {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 16px 8px;
+    text-align: center;
+    font-size: 16px;
+}
+.cart-page-shop th {
+    background: #f7faff;
+    color: #3e89d9;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+.cart-page-shop tbody tr {
+    transition: background 0.2s;
+}
+.cart-page-shop tbody tr:hover {
+    background: #f5f7fa;
+}
+.cart-page-shop input[type="checkbox"] {
+    accent-color: #3e89d9;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+.cart-page-shop label img {
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-left: 8px;
+}
+.cart-page-shop button {
+    background: #3e89d9;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+.cart-page-shop button:hover {
+    background: #2566b3;
+}
+.checkall label{
+    padding-left: 10px;
+}
+.cart-empty{
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+.cps-bottom{
+    width: 1000px;
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    letter-spacing: 2px;
+}
+.cpsb-price{
+    color: var(--theme-bg-color);
+    font-size: 16px;
+}
+.cpsb-price span{
+    font-size: 24px;
+    font-weight: 500;
+    color: #2566b3;
+}
+.cpsb-pay{
+    width: 120px;
+    height: 40px;
+    margin-top: 20px;
+    border-radius: 4px;
+    background-color: #2566b3;
+    color: #fff;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.cpsb-pay:hover{
+    background-color: #3e89d9;
+}
+.cps-bottom a{
+    margin-top: 10px;
+    color: #2566b3;
+}
+.cps-bottom a:hover{
+    color: #3e89d9;
+}

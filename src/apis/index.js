@@ -157,7 +157,7 @@ export const goodsDetail = async (goodsId) => {
 }
 
 // post：添加商品到购物车
-export const addToCart = async (userId,goodsId,goodsNumber) =>{
+export const addToCart = async (userId, goodsId, goodsNumber) => {
     try {
         let res = await axios.post('/api_cart', {
             status: 'addcart',
@@ -175,6 +175,49 @@ export const addToCart = async (userId,goodsId,goodsNumber) =>{
         return true;
     } catch (error) {
         console.error('添加商品到购物车失败:', error);
+        return false;
+    }
+}
+
+// post：获取购物车列表
+export const getCartList = async (userId) => {
+    try {
+        let res = await axios.post('/api_cart', {
+            status: 'viewcart',
+            userId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取购物车列表失败:', error);
+        return false;
+    }
+} 
+
+// post：删除单件商品
+export const deleteCartItem = async (userId, goodsId) => {
+    try {
+        let res = await axios.post('/api_cart', {
+            status: 'delcart',
+            userId,
+            goodsId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('删除单件商品失败:', error);
         return false;
     }
 }

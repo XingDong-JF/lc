@@ -12,6 +12,7 @@ import '../assets/css/detail.css';
 
 import { goodsDetail, addToCart } from '../apis';
 import { onMounted, ref, computed, watch, onUnmounted } from 'vue';
+import { useCartStore } from '../stores/cartStore';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -171,62 +172,35 @@ const addLike = () => {
     }
 };
 
-// 添加到购物车
+// 添加到购物车并刷新pinia购物车
+const cartStore = useCartStore();
 const addToCartHandle = () => {
-    // 防抖处理
     if (isAddingToCart.value) return;
-    
-    // 检查前置条件
     if (!isNumber.value) {
         showAddCartError.value = true;
-        setTimeout(() => {
-            showAddCartError.value = false;
-        }, 2000);
+        setTimeout(() => { showAddCartError.value = false; }, 2000);
         return;
     }
-    
-    // 获取用户ID - 先检查sessionStorage再检查localStorage
-    let userId = sessionStorage.getItem('userId');
-    // 如果sessionStorage中没有，再尝试从localStorage获取
+    let userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
     if (!userId) {
-        userId = localStorage.getItem('userId');
-    }
-    
-    // 检查是否获取到userId
-    if (!userId) {
-        console.log('未找到用户ID', {
-            sessionUserId: sessionStorage.getItem('userId'),
-            localUserId: localStorage.getItem('userId')
-        });
         showAddCartError.value = true;
-        setTimeout(() => {
-            showAddCartError.value = false;
-        }, 2000);
+        setTimeout(() => { showAddCartError.value = false; }, 2000);
         return;
     }
-    
     isAddingToCart.value = true;
-    console.log('添加到购物车:', {userId, goodsId: goodsId.value, goodsCount: goodsCount.value});
-    
-    // 调用API添加到购物车
-    addToCart(userId, goodsId.value, goodsCount.value).then(result => {
+    addToCart(userId, goodsId.value, goodsCount.value).then(async result => {
         if (result) {
             showAddCartSuccess.value = true;
-            setTimeout(() => {
-                showAddCartSuccess.value = false;
-            }, 2000);
+            await cartStore.fetchCartList();
+            setTimeout(() => { showAddCartSuccess.value = false; }, 2000);
         } else {
             showAddCartError.value = true;
-            setTimeout(() => {
-                showAddCartError.value = false;
-            }, 2000);
+            setTimeout(() => { showAddCartError.value = false; }, 2000);
         }
         isAddingToCart.value = false;
     }).catch(() => {
         showAddCartError.value = true;
-        setTimeout(() => {
-            showAddCartError.value = false;
-        }, 2000);
+        setTimeout(() => { showAddCartError.value = false; }, 2000);
         isAddingToCart.value = false;
     });
 };
