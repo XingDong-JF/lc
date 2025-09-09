@@ -47,8 +47,6 @@ onMounted(() => {
         <span>人气良品</span>
     </div>
     <div class="ht">
-        <!-- :to="{ name: 'Detail', params: { goodsId: item.goods_id }}" -->
-        <!-- 待补充，热门商品跳转到详情 -->
         <div v-for="(item, index) in hotList" :key="item.goods_id" class="ht-goods-wrapper">
             <router-link :to="{ name: 'Detail', params: { goodsId: item.goods_id }}" >
                 <div class="ht-goods">

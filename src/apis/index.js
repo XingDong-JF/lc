@@ -198,7 +198,7 @@ export const getCartList = async (userId) => {
         console.error('获取购物车列表失败:', error);
         return false;
     }
-} 
+}
 
 // post：删除单件商品
 export const deleteCartItem = async (userId, goodsId) => {
@@ -218,6 +218,26 @@ export const deleteCartItem = async (userId, goodsId) => {
         return true;
     } catch (error) {
         console.error('删除单件商品失败:', error);
+        return false;
+    }
+}
+
+// get：搜索商品
+export const searchGoods = async (page, pagesize, keywords) => {
+    try {
+        let res = await axios.get('/api_search', {
+            params: {
+                page,
+                pagesize,
+                keywords
+            }
+        })
+        if (res.data.code !== 0) {
+            return res.data;
+        }
+        return res.data;
+    } catch (error) {
+        console.error('搜索商品失败:', error);
         return false;
     }
 }

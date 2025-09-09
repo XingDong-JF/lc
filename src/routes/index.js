@@ -77,6 +77,15 @@ const routes = [
       requiresAuth: true // 标记为需要认证的页面
     }
   },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('../pages/search.vue'), // 懒加载
+    meta: {
+      title: '良仓-搜索',
+      requiresAuth: true // 标记为需要认证的页面
+    }
+  },
 ];
 
 // 创建路由实例

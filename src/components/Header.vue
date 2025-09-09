@@ -6,15 +6,35 @@ import GoodsClassify from './GoodsClassify.vue';
 import '../assets/css/header.css';
 
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const username = ref('admin');
 const isScrolled = ref(false);
+const router = useRouter();
+const searchKeyword = ref('');
 
 const handleScroll = () => {
     if (window.scrollY > 100) {
         isScrolled.value = true;
     } else {
         isScrolled.value = false;
+    }
+};
+
+// 处理搜索
+const handleSearch = () => {
+    if (searchKeyword.value.trim()) {
+        router.push({
+            path: '/search',
+            query: { keyword: searchKeyword.value.trim() }
+        });
+    }
+};
+
+// 处理回车键搜索
+const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+        handleSearch();
     }
 };
 
@@ -49,7 +69,6 @@ onUnmounted(() => {
                 <span>|</span>
                 <router-link class="cart-link">
                     <li>购物车</li>
-                    <!-- 代补充：购物车组件数据渲染以及页面 -->
                     <Cart class="cart"></Cart> 
                 </router-link>
                 <span>|</span>
@@ -91,8 +110,13 @@ onUnmounted(() => {
             </ul>
             <!-- 待补充商品搜索 -->
             <div class="nb-r">
-                <input type="text" placeholder="搜索商品/品牌/店铺">
-                <span></span>
+                <input 
+                    type="text" 
+                    v-model="searchKeyword"
+                    @keypress="handleKeyPress"
+                    placeholder="搜索商品/品牌/店铺"
+                >
+                <span @click="handleSearch"></span>
             </div>
         </div>
     </div>
