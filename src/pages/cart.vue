@@ -6,7 +6,7 @@ import MenuPop from '../components/MenuPop.vue';
 import PopUp from '../components/PopUp.vue';
 import OurShop from '../components/OurShop.vue';
 import "../assets/css/cart.css";
-import { getCartList, deleteCartItem, getProvinces, getCities, getDistricts, addAress, getAddressList, deleteAddress } from '../apis';
+import { getCartList, deleteCartItem, getProvinces, getCities, getDistricts, addAress, getAddressList, deleteAddress, clearCart } from '../apis';
 import { ref, onMounted,watch,computed } from 'vue';
 import { useCartStore } from '../stores/cartStore';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -301,6 +301,47 @@ const deleteAddressItem = async (addressId) => {
         ElMessage.error('地址删除失败，请重试！');
     }
 }
+// 清空购物车
+const clearCartAll = async () => {
+    try {
+        // 确认清空
+        await ElMessageBox.confirm(
+            '确定要清空购物车吗？',
+            '提示',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+        );
+        
+        const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+        if (!userId) {
+            console.error('用户未登录');
+            return;
+        }
+        
+        const res = await clearCart(userId);
+        
+        if (res) {
+            // 清空成功后刷新购物车列表
+            await cartStore.fetchCartList();
+            // 清空选中状态
+            selectedItems.value = [];
+            isAllChecked.value = false;
+            ElMessage.success('购物车已清空！');
+        } else {
+            ElMessage.error('清空购物车失败，请重试！');
+        }
+    } catch (error) {
+        if (error === 'cancel') {
+            // 用户取消清空，不显示错误信息
+            return;
+        }
+        console.error('清空购物车时发生错误:', error);
+        ElMessage.error('清空购物车失败，请重试！');
+    }
+}
 onMounted(() => {
     fetchCartList();
     fetchProvinces(); // 获取省份数据
@@ -348,6 +389,9 @@ onMounted(() => {
                         </tr>
                     </tbody>
                 </table>
+                <div class="cart-actions">
+                    <button class="clear-cart-btn" @click="clearCartAll">清空购物车</button>
+                </div>
                 <div class="cps-bottom">
                     <div class="cpsb-price">
                         良品总价：<span>￥{{ totalPrice }}</span>
@@ -494,214 +538,4 @@ onMounted(() => {
     <Footer></Footer>
 </template>
 <style scoped>
-.cart-page-shop{
-    min-height: 518px;
-}
-
-/* 新增地址表单样式 */
-.cppa-newAddress {
-    background: #fff;
-    border-radius: 8px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-top: 20px;
-}
-
-.cppa-newAddress h3 {
-    color: #3e89d9;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f0f0f0;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.address-form {
-    max-width: 600px;
-}
-
-.form-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    gap: 12px;
-}
-
-.form-row label {
-    width: 100px;
-    color: #333;
-    font-size: 16px;
-    font-weight: 500;
-    flex-shrink: 0;
-}
-
-.form-input {
-    flex: 1;
-    height: 40px;
-    padding: 0 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.2s;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: #3e89d9;
-    box-shadow: 0 0 0 2px rgba(62, 137, 217, 0.1);
-}
-
-.select-group {
-    flex: 1;
-    display: flex;
-    gap: 8px;
-}
-
-.form-select {
-    flex: 1;
-    height: 40px;
-    padding: 0 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    background: #fff;
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.form-select:focus {
-    outline: none;
-    border-color: #3e89d9;
-    box-shadow: 0 0 0 2px rgba(62, 137, 217, 0.1);
-}
-
-.form-select:disabled {
-    background: #f5f5f5;
-    cursor: not-allowed;
-    color: #999;
-}
-
-.add-address-btn {
-    background: #3e89d9;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 12px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-left: 112px;
-}
-
-.add-address-btn:hover {
-    background: #2566b3;
-}
-
-.add-address-btn:active {
-    transform: translateY(1px);
-}
-
-/* 地址列表样式 */
-.cppa-addressList {
-    margin-bottom: 24px;
-}
-
-.address-list-container {
-    background: #fff;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.address-list-wrapper {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    padding: 8px 0;
-}
-
-.address-card {
-    min-width: 280px;
-    background: #fff;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-
-.address-card:hover {
-    border-color: #3e89d9;
-    box-shadow: 0 2px 12px rgba(62, 137, 217, 0.1);
-}
-
-.address-card.selected {
-    border-color: #3e89d9;
-    background: #f7faff;
-    box-shadow: 0 0 0 2px rgba(62, 137, 217, 0.1);
-}
-
-.address-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.address-info {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.address-name {
-    font-weight: 600;
-    color: #333;
-    font-size: 16px;
-}
-
-.address-phone {
-    color: #666;
-    font-size: 14px;
-}
-
-.delete-btn {
-    background: #ff6b6b;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.delete-btn:hover {
-    background: #ff5252;
-}
-
-.address-card-body {
-    margin-top: 8px;
-}
-
-.address-detail {
-    color: #666;
-    font-size: 14px;
-    line-height: 1.4;
-    margin: 0;
-}
-
-.no-address {
-    text-align: center;
-    padding: 40px;
-    color: #999;
-    background: #f9f9f9;
-    border-radius: 8px;
-}
-
-.no-address p {
-    margin: 0;
-    font-size: 16px;
-}
 </style>

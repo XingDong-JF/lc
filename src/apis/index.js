@@ -200,6 +200,28 @@ export const getCartList = async (userId) => {
     }
 }
 
+// post：清空购物车商品
+export const clearCart = async (userId) => {
+    try {
+        let res = await axios.post('/api_cart', { 
+            status: 'delcartall',
+            userId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('清空购物车商品失败:', error);
+        return false;
+    }
+}
+
+
 // post：删除单件商品
 export const deleteCartItem = async (userId, goodsId) => {
     try {
