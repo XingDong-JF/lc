@@ -241,3 +241,125 @@ export const searchGoods = async (page, pagesize, keywords) => {
         return false;
     }
 }
+
+// get：获取省份
+export const getProvinces = async () => {
+    try {
+        let res = await axios.get('/api_country');
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取省份失败:', error);
+        return false;
+    }
+}
+
+// get：获取城市
+export const getCities = async (province) => {
+    try {
+        let res = await axios.get('/api_country', {
+            params: {
+                province
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取城市失败:', error);
+        return false;
+    }
+}
+
+// get：获取区县
+export const getDistricts = async (province,city) => {
+    try {
+        let res = await axios.get('/api_country', {
+            params: {
+                province,
+                city
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取区县失败:', error);
+        return false;
+    }
+}
+
+// post：新增收获地址
+export const addAress = async (status, userId, province, city, district, streetname, takename, postcode, tel) => {
+    try {
+        let res = await axios.post('/api_address',{
+            status: "addAddress",
+            userId,
+            province,
+            city,
+            district,
+            streetname,
+            takename,
+            postcode,
+            tel
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('新增收获地址失败:', error);
+        return false;
+    }
+}
+
+// post：获取收获地址列表
+export const getAddressList = async (userId) => {
+    try {
+        let res = await axios.post('/api_address', {
+            status: "getAddress",
+            userId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取收获地址列表失败:', error);
+        return false;
+    }
+}
+
+// post： 删除收获地址
+export const deleteAddress = async (userId, addressId) => {
+    try {
+        let res = await axios.post('/api_address', {
+            status: "deleteAddress",
+            userId,
+            addressId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }   
+        return true;
+    } catch (error) {
+        console.error('删除收获地址失败:', error);
+        return false;
+    }
+}

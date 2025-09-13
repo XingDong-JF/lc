@@ -4,15 +4,39 @@ import Footer from '../components/Footer.vue';
 import GoTop from '../components/GoTop.vue';
 import MenuPop from '../components/MenuPop.vue';
 import PopUp from '../components/PopUp.vue';
+import OurShop from '../components/OurShop.vue';
 import "../assets/css/cart.css";
-import { getCartList, deleteCartItem } from '../apis';
+import { getCartList, deleteCartItem, getProvinces, getCities, getDistricts, addAress, getAddressList, deleteAddress } from '../apis';
 import { ref, onMounted,watch,computed } from 'vue';
 import { useCartStore } from '../stores/cartStore';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 const isPay = ref(true);
 const showCartList = ref(false);
 const cartStore = useCartStore();
 const cartList = computed(() => cartStore.cartList);
+
+// 新增地址表单数据
+const addressForm = ref({
+    takename: '',      // 收货人姓名
+    province: '',      // 省份
+    city: '',          // 城市
+    district: '',      // 区县
+    streetname: '',    // 详细地址
+    tel: '',          // 手机号码
+    postcode: ''      // 邮政编码（从选择的区县数据中获取code）
+});
+
+// 地址选择器数据
+const provinces = ref([]);
+const cities = ref([]);
+const districts = ref([]);
+
+// 地址列表数据
+const addressList = ref([]);
+
+// 选中的地址
+const selectedAddress = ref(null);
 
 // 选中商品总价，响应式
 const totalPrice = computed(() => {
@@ -93,8 +117,194 @@ const fetchCartList = async () => {
         showCartList.value = true;
     }
 }
+
+// 获取省份数据
+const fetchProvinces = async () => {
+    try {
+        const res = await getProvinces();
+        if (res && Array.isArray(res) && res.length > 0) {
+            provinces.value = res;
+        } else {
+            console.error('获取省份数据失败或数据为空:', res);
+        }
+    } catch (error) {
+        console.error('获取省份数据时发生错误:', error);
+    }
+}
+
+// 获取地址列表
+const fetchAddressList = async () => {
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    if (!userId) {
+        console.error('用户未登录');
+        return;
+    }
+    
+    try {
+        const res = await getAddressList(userId);
+        if (res && Array.isArray(res)) {
+            addressList.value = res;
+        } else {
+            console.error('获取地址列表失败或数据为空:', res);
+            addressList.value = [];
+        }
+    } catch (error) {
+        console.error('获取地址列表时发生错误:', error);
+        addressList.value = [];
+    }
+}
+
+// 选择地址
+const selectAddress = (address) => {
+    selectedAddress.value = address;
+    console.log('选中的地址:', selectedAddress.value);
+}
+
+// 清空表单
+const clearAddressForm = () => {
+    addressForm.value = {
+        takename: '',
+        province: '',
+        city: '',
+        district: '',
+        streetname: '',
+        tel: '',
+        postcode: ''
+    };
+    // 清空选择器数据
+    cities.value = [];
+    districts.value = [];
+}
+
+// 省份选择改变时，获取城市数据
+const onProvinceChange = async () => {
+    // 清空城市和区县选择
+    addressForm.value.city = '';
+    addressForm.value.district = '';
+    cities.value = [];
+    districts.value = [];
+    
+    if (addressForm.value.province) {
+        const res = await getCities(addressForm.value.province);
+        if (res) {
+            cities.value = res;
+        }
+    }
+}
+
+// 城市选择改变时，获取区县数据
+const onCityChange = async () => {
+    // 清空区县选择
+    addressForm.value.district = '';
+    districts.value = [];
+    
+    if (addressForm.value.city) {
+        const res = await getDistricts(addressForm.value.province, addressForm.value.city);
+        if (res && res.area) {
+            districts.value = res.area;
+        }
+    }
+}
+
+// 区县选择改变时，保存code到邮政编码字段
+const onDistrictChange = () => {
+    if (addressForm.value.district) {
+        const selectedDistrict = districts.value.find(item => item.name === addressForm.value.district);
+        if (selectedDistrict) {
+            addressForm.value.postcode = selectedDistrict.code;
+        }
+    }
+}
+
+// 新增地址
+const addNewAddress = async () => {
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    if (!userId) {
+        console.error('用户未登录');
+        return;
+    }
+    
+    // 表单验证
+    if (!addressForm.value.takename || !addressForm.value.province || !addressForm.value.city || 
+        !addressForm.value.district || !addressForm.value.streetname || !addressForm.value.tel) {
+        ElMessage.warning('请填写完整的地址信息');
+        return;
+    }
+    
+    try {
+        const res = await addAress(
+            'addAddress',
+            userId,
+            addressForm.value.province,
+            addressForm.value.city,
+            addressForm.value.district,
+            addressForm.value.streetname,
+            addressForm.value.takename,
+            addressForm.value.postcode,
+            addressForm.value.tel
+        );
+        
+        if (res) {
+            // 新增成功后刷新地址列表
+            await fetchAddressList();
+            // 清空表单
+            clearAddressForm();
+            ElMessage.success('地址添加成功！');
+        } else {
+            ElMessage.error('地址添加失败，请重试！');
+        }
+    } catch (error) {
+        console.error('新增地址时发生错误:', error);
+        ElMessage.error('地址添加失败，请重试！');
+    }
+}
+
+// 删除地址
+const deleteAddressItem = async (addressId) => {
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    if (!userId) {
+        console.error('用户未登录');
+        return;
+    }
+    
+    try {
+        // 确认删除
+        await ElMessageBox.confirm(
+            '确定要删除这个地址吗？',
+            '提示',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+        );
+        
+        const res = await deleteAddress(userId, addressId);
+        
+        if (res) {
+            // 删除成功后刷新地址列表
+            await fetchAddressList();
+            // 如果删除的是当前选中的地址，清空选中状态
+            if (selectedAddress.value && selectedAddress.value.address_id === addressId) {
+                selectedAddress.value = null;
+            }
+            ElMessage.success('地址删除成功！');
+        } else {
+            ElMessage.error('地址删除失败，请重试！');
+        }
+    } catch (error) {
+        if (error === 'cancel') {
+            // 用户取消删除，不显示错误信息
+            return;
+        }
+        console.error('删除地址时发生错误:', error);
+        ElMessage.error('地址删除失败，请重试！');
+    }
+}
 onMounted(() => {
     fetchCartList();
+    fetchProvinces(); // 获取省份数据
+    fetchAddressList(); // 获取地址列表
 });
 </script>
 <template>
@@ -151,17 +361,347 @@ onMounted(() => {
             </div>
         </div>
         <div v-else class="cart-page-pay">
-
+            <div class="cpp-address">
+                <div class="cppa-title">
+                    <p>收货地址</p>
+                </div>
+                <div class="cppa-addressList">
+                    <div v-if="addressList.length > 0" class="address-list-container">
+                        <div class="address-list-wrapper">
+                            <div 
+                                v-for="address in addressList" 
+                                :key="address.address_id"
+                                :class="['address-card', { 'selected': selectedAddress && selectedAddress.address_id === address.address_id }]"
+                                @click="selectAddress(address)"
+                            >
+                                <div class="address-card-header">
+                                    <div class="address-info">
+                                        <span class="address-name">{{ address.takename }}</span>
+                                        <span class="address-phone">{{ address.tel }}</span>
+                                    </div>
+                                    <button class="delete-btn" @click.stop="deleteAddressItem(address.address_id)">删除</button>
+                                </div>
+                                <div class="address-card-body">
+                                    <p class="address-detail">
+                                        {{ address.province }} {{ address.district }} {{ address.streetname }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="no-address">
+                        <p>暂无收货地址，请添加新地址</p>
+                    </div>
+                </div>
+                <div class="cppa-newAddress">
+                    <h3>新增收货地址</h3>
+                    <div class="address-form">
+                        <div class="form-row">
+                            <label>收货人姓名：</label>
+                            <input 
+                                type="text" 
+                                v-model="addressForm.takename" 
+                                placeholder="请输入收货人姓名"
+                                class="form-input"
+                            >
+                        </div>
+                        
+                        <div class="form-row">
+                            <label>所在地区：</label>
+                            <div class="select-group">
+                                <select 
+                                    v-model="addressForm.province" 
+                                    @change="onProvinceChange"
+                                    class="form-select"
+                                >
+                                    <option value="">请选择省份</option>
+                                    <option 
+                                        v-for="province in provinces" 
+                                        :key="province.code" 
+                                        :value="province.name"
+                                    >
+                                        {{ province.name }}
+                                    </option>
+                                </select>
+                                
+                                <select 
+                                    v-model="addressForm.city" 
+                                    @change="onCityChange"
+                                    :disabled="!addressForm.province"
+                                    class="form-select"
+                                >
+                                    <option value="">请选择城市</option>
+                                    <option 
+                                        v-for="city in cities" 
+                                        :key="city.code" 
+                                        :value="city.name"
+                                    >
+                                        {{ city.name }}
+                                    </option>
+                                </select>
+                                
+                                <select 
+                                    v-model="addressForm.district" 
+                                    @change="onDistrictChange"
+                                    :disabled="!addressForm.city"
+                                    class="form-select"
+                                >
+                                    <option value="">请选择区县</option>
+                                    <option 
+                                        v-for="district in districts" 
+                                        :key="district.code" 
+                                        :value="district.name"
+                                    >
+                                        {{ district.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <label>详细地址：</label>
+                            <input 
+                                type="text" 
+                                v-model="addressForm.streetname" 
+                                placeholder="请输入详细地址"
+                                class="form-input"
+                            >
+                        </div>
+                        
+                        <div class="form-row">
+                            <label>手机号码：</label>
+                            <input 
+                                type="tel" 
+                                v-model="addressForm.tel" 
+                                placeholder="请输入手机号码"
+                                class="form-input"
+                            >
+                        </div>
+                        
+                        <div class="form-row">
+                            <button class="add-address-btn" @click="addNewAddress">新增地址</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <Header></Header>
     <MenuPop></MenuPop>
     <GoTop></GoTop>
+    <OurShop></OurShop>
     <PopUp v-if="showCartList" message="获取购物车清单失败！"></PopUp>
     <Footer></Footer>
 </template>
 <style scoped>
 .cart-page-shop{
     min-height: 518px;
+}
+
+/* 新增地址表单样式 */
+.cppa-newAddress {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-top: 20px;
+}
+
+.cppa-newAddress h3 {
+    color: #3e89d9;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.address-form {
+    max-width: 600px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+}
+
+.form-row label {
+    width: 100px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.form-input {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3e89d9;
+    box-shadow: 0 0 0 2px rgba(62, 137, 217, 0.1);
+}
+
+.select-group {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+}
+
+.form-select {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #3e89d9;
+    box-shadow: 0 0 0 2px rgba(62, 137, 217, 0.1);
+}
+
+.form-select:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    color: #999;
+}
+
+.add-address-btn {
+    background: #3e89d9;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: 112px;
+}
+
+.add-address-btn:hover {
+    background: #2566b3;
+}
+
+.add-address-btn:active {
+    transform: translateY(1px);
+}
+
+/* 地址列表样式 */
+.cppa-addressList {
+    margin-bottom: 24px;
+}
+
+.address-list-container {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.address-list-wrapper {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 8px 0;
+}
+
+.address-card {
+    min-width: 280px;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.address-card:hover {
+    border-color: #3e89d9;
+    box-shadow: 0 2px 12px rgba(62, 137, 217, 0.1);
+}
+
+.address-card.selected {
+    border-color: #3e89d9;
+    background: #f7faff;
+    box-shadow: 0 0 0 2px rgba(62, 137, 217, 0.1);
+}
+
+.address-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.address-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.address-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+.address-phone {
+    color: #666;
+    font-size: 14px;
+}
+
+.delete-btn {
+    background: #ff6b6b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.delete-btn:hover {
+    background: #ff5252;
+}
+
+.address-card-body {
+    margin-top: 8px;
+}
+
+.address-detail {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.no-address {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.no-address p {
+    margin: 0;
+    font-size: 16px;
 }
 </style>

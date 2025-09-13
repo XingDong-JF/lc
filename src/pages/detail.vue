@@ -13,9 +13,10 @@ import '../assets/css/detail.css';
 import { goodsDetail, addToCart } from '../apis';
 import { onMounted, ref, computed, watch, onUnmounted } from 'vue';
 import { useCartStore } from '../stores/cartStore';
-import { useRoute } from 'vue-router';
+import { useRoute,useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 const goodsId = ref(route.params.goodsId);
 const goodsData = ref([]);
 const showDetaliError = ref(false);
@@ -174,7 +175,7 @@ const addLike = () => {
 
 // 添加到购物车并刷新pinia购物车
 const cartStore = useCartStore();
-const addToCartHandle = () => {
+const addToCartHandle = (isShop) => {
     if (isAddingToCart.value) return;
     if (!isNumber.value) {
         showAddCartError.value = true;
@@ -193,6 +194,10 @@ const addToCartHandle = () => {
             showAddCartSuccess.value = true;
             await cartStore.fetchCartList();
             setTimeout(() => { showAddCartSuccess.value = false; }, 2000);
+            if (isShop) {
+                // 跳转到购物车页面
+                setTimeout(() => { router.push('/cart') }, 1000);
+            }
         } else {
             showAddCartError.value = true;
             setTimeout(() => { showAddCartError.value = false; }, 2000);
@@ -385,7 +390,7 @@ const isMinCount = computed(() => {
                     </div>
                     <div class="dltr-tips-nonumber">
                         <!-- 待补充点击跳转支付页面 -->
-                        <div v-if="isNumber" class="dltr-addShop">
+                        <div v-if="isNumber" class="dltr-addShop" @click="addToCartHandle(true)">
                             立即购买
                         </div>
                         <div v-else class="dltr-nonumber">
@@ -394,7 +399,7 @@ const isMinCount = computed(() => {
                     </div>
                     <div class="dltr-btus">
                         <!-- 待补充加入购物车 -->
-                        <div class="dltr-left-btu" @click="addToCartHandle">
+                        <div class="dltr-left-btu" @click="addToCartHandle(false)">
                             <img src="../assets/imgs/导航-购物车.png" alt="">
                             <span>添加购物车</span>
                         </div>
