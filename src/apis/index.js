@@ -203,7 +203,7 @@ export const getCartList = async (userId) => {
 // post：清空购物车商品
 export const clearCart = async (userId) => {
     try {
-        let res = await axios.post('/api_cart', { 
+        let res = await axios.post('/api_cart', {
             status: 'delcartall',
             userId
         }, {
@@ -297,7 +297,7 @@ export const getCities = async (province) => {
 }
 
 // get：获取区县
-export const getDistricts = async (province,city) => {
+export const getDistricts = async (province, city) => {
     try {
         let res = await axios.get('/api_country', {
             params: {
@@ -318,7 +318,7 @@ export const getDistricts = async (province,city) => {
 // post：新增收获地址
 export const addAress = async (status, userId, province, city, district, streetname, takename, postcode, tel) => {
     try {
-        let res = await axios.post('/api_address',{
+        let res = await axios.post('/api_address', {
             status: "addAddress",
             userId,
             province,
@@ -378,10 +378,187 @@ export const deleteAddress = async (userId, addressId) => {
         });
         if (res.data.code !== 0) {
             return false;
-        }   
+        }
         return true;
     } catch (error) {
         console.error('删除收获地址失败:', error);
+        return false;
+    }
+}
+
+// post：设置默认收获地址
+export const setDefaultAddress = async (userId, addressId) => {
+    try {
+        let res = await axios.post('/api_address', {
+            status: "defaultAddress",
+            userId,
+            addressId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('设置默认收获地址失败:', error);
+        return false;
+    }
+}
+
+// post：设置当前收货地址
+export const setCurrentAddress = async (userId, addressId) => {
+    try {
+        let res = await axios.post('/api_address', {
+            status: "activeAddress",
+            userId,
+            addressId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('设置当前收货地址失败:', error);
+        return false;
+    }
+}
+
+// post：加入结算清单
+export const addToOrder = async (userId, goodsId) => {
+    try {
+        let res = await axios.post('/api_settlement', {
+            status: "addsettlement",
+            userId,
+            goodsId,
+            from: 'cart'
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('加入结算清单失败:', error);
+        return false;
+    }
+}
+
+// post：获取结算清单
+export const getOrderList = async (userId) => {
+    try {
+        let res = await axios.post('/api_settlement', {
+            status: "getsettlement",
+            userId
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('获取结算清单失败:', error);
+        return false;
+    }
+}
+
+// post：支付
+export const payOrder = async (userId, orderId, returnUrl, totalAmount, subject, body) => {
+    try {
+        let res = await axios.post('/api_payment', {
+            userId,
+            orderId,
+            returnUrl,
+            totalAmount,
+            subject,
+            body
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data;
+    } catch (error) {
+        console.error('支付失败:', error);
+        return false;
+    }
+}
+
+// post：支付订单查询
+export const queryPaymentStatus = async (userId, tradeNo) => {
+    try {
+        let res = await axios.post('/api_payquery', {
+            userId,
+            tradeNo
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data;
+    } catch (error) {
+        console.error('支付订单查询失败:', error);
+        return false;
+    }
+}
+
+// post：用户订单列表
+export const getUserOrders = async (userId) => {
+    try {
+        let res = await axios.post('/api_order', {
+            userId,
+            status: 'vieworder'
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return res.data.data;
+    } catch (error) {
+        console.error('用户订单列表查询失败:', error);
+        return false;
+    }
+}
+
+// post：删除用户订单
+export const deleteUserOrder = async (userId, tradeNo) => {
+    try {
+        let res = await axios.post('/api_order', {
+            userId,
+            tradeNo,
+            status: 'delorder'
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (res.data.code !== 0) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('删除用户订单失败:', error);
         return false;
     }
 }

@@ -46,6 +46,26 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path
       },
+      '/api_settlement': {
+        target: 'http://8.134.172.28:3008', 
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
+      '/api_payment': {
+        target: 'http://8.134.172.28:3008', 
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
+      '/api_payquery': {
+        target: 'http://8.134.172.28:3008', 
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
+      '/api_order': {
+        target: 'http://8.134.172.28:3008', 
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
     }
   }
 })

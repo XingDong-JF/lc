@@ -85,6 +85,14 @@ const routes = [
       title: '良仓-搜索',
       requiresAuth: true // 标记为需要认证的页面
     }
+  },{
+    path: '/payment',
+    name: 'Payment',
+    component: () => import('../pages/payment.vue'), // 懒加载
+    meta: {
+      title: '良仓-订单查询',
+      requiresAuth: true // 标记为需要认证的页面
+    }
   },
 ];
 
